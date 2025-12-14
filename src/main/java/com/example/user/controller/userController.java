@@ -43,7 +43,7 @@ public class userController {
         }
     }
 
-    @PostMapping("/signup")
+    @PostMapping("/login")
     public ResponseEntity<?> signUp(@RequestBody UserPojo user){
         UserPojo user1=service.verifyUser(user);
         if(user1==null){

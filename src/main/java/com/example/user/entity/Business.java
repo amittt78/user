@@ -18,6 +18,8 @@ public class Business {
     private String cin;
     private Boolean agreeTerms=true;
 
+    private String userId;
+
     public String getId() {
         return id;
     }
@@ -88,5 +90,13 @@ public class Business {
 
     public void setAgreeTerms(Boolean agreeTerms) {
         this.agreeTerms = agreeTerms;
+    }
+
+    public String getUser() {
+        return userId;
+    }
+
+    public void setUser(String user) {
+        this.userId = user;
     }
 }

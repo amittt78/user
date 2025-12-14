@@ -18,30 +18,33 @@ public class businessService {
     businessRepo repo;
     @Autowired
     businessModuleRepo repo1;
-    public BusinessPojo addBusiness(BusinessPojo business) {
-         Business business1=new Business();
-         business1.setBusinessName(business.getBusinessName());
-         business1.setOwnerName(business.getOwnerName());
-         business1.setBusinessAddress(business.getBusinessAddress());
-         business1.setLicenseNo(business.getLicenseNo());
-         business1.setGstNo(business.getGstNo());
-         business1.setCin(business.getCin());
-         BusinessModule module=repo1.findById(business.getBusinessModuleId())
-                 .orElseThrow(() -> new RuntimeException("Invalid BusinessModule ID"));
-         business1.setBusinessmodule(module);
+    public Business addBusiness(BusinessPojo business) {
+        Business business1 = new Business();
+        business1.setBusinessName(business.getBusinessName());
+        business1.setOwnerName(business.getOwnerName());
+        business1.setBusinessAddress(business.getBusinessAddress());
+        business1.setLicenseNo(business.getLicenseNo());
+        business1.setGstNo(business.getGstNo());
+        business1.setCin(business.getCin());
+        business1.setUser(business.getUserId());
+        BusinessModule module = repo1.findById(business.getBusinessModuleId())
+                .orElseThrow(() -> new RuntimeException("Invalid BusinessModule ID"));
+        business1.setBusinessmodule(module);
 
-         Business savedBusiness=repo.save(business1);
+        Business savedBusiness = repo.save(business1);
 
-         BusinessPojo savedPojo=new BusinessPojo();
+        /* BusinessPojo savedPojo=new BusinessPojo();
          savedPojo.setBusinessName(savedBusiness.getBusinessName());
          savedPojo.setOwnerName(savedBusiness.getOwnerName());
          savedPojo.setBusinessAddress(savedBusiness.getBusinessAddress());
          savedPojo.setLicenseNo(savedBusiness.getLicenseNo());
          savedPojo.setGstNo(savedBusiness.getGstNo());
+        savedPojo.setUserId(savedPojo.getUserId());
          savedPojo.setCin(savedBusiness.getCin());
-         savedPojo.setBusinessModuleId(module.getId());
+         savedPojo.setBusinessModuleId(module.getId());*/
 
-         return savedPojo;
+        return savedBusiness;
+
 
     }
 

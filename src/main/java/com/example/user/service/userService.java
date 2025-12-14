@@ -1,10 +1,15 @@
 package com.example.user.service;
 
+import com.example.user.entity.Business;
 import com.example.user.entity.Role;
 import com.example.user.entity.User;
+import com.example.user.model.BusinessPojo;
+import com.example.user.model.RolePojo;
 import com.example.user.model.UserPojo;
+import com.example.user.repo.businessRepo;
 import com.example.user.repo.roleRepo;
 import com.example.user.repo.userRepo;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,6 +25,13 @@ public class userService {
     userRepo repo;
     @Autowired
     roleRepo roleRepo1;
+
+    @Autowired
+    businessRepo businessRepo;
+
+    @Autowired
+    businessService businessService;
+
     public UserPojo addUser(UserPojo userPojo) {
 
         if (repo.existsByEmail(userPojo.getEmail())) {
@@ -29,6 +41,7 @@ public class userService {
         if (repo.existsByMobileno(userPojo.getMobileno())) {
             throw new RuntimeException("Mobile already exists");
         }
+        Business businessPojoSaved = businessService.addBusiness(userPojo.getBusinessPojo());
 
         User userEntity = new User();
         userEntity.setFirstname(userPojo.getFirstname());
@@ -37,16 +50,21 @@ public class userService {
         userEntity.setMobileno(userPojo.getMobileno());
         userEntity.setStatus(userPojo.getStatus());
 
-        String hasherPassword=passwordEncoder.encode(userPojo.getPassword());
+        String hasherPassword = passwordEncoder.encode(userPojo.getPassword());
 
         userEntity.setPassword(hasherPassword);
 
-        Role role = roleRepo1.findById(userPojo.getRoleid())
+        Role role = roleRepo1.findById(userPojo.getRoleId())
                 .orElseThrow(() -> new RuntimeException("Invalid Role ID"));
 
-        userEntity.setRoleid(role);
+        userEntity.setRole(role);
+
+        userEntity.setBusinessid(businessPojoSaved);
 
         User savedUser = repo.save(userEntity);
+        BusinessPojo businessPojo = userPojo.getBusinessPojo();
+        businessPojo.setUserId(savedUser.getId());
+
 
         UserPojo savedPojo = new UserPojo();
         savedPojo.setId(savedUser.getId());
@@ -55,7 +73,8 @@ public class userService {
         savedPojo.setEmail(savedUser.getEmail());
         savedPojo.setMobileno(savedUser.getMobileno());
         savedPojo.setStatus(savedUser.getStatus());
-        savedPojo.setRoleid(role.getId());
+        savedPojo.setBusinessPojo(mapEntityToPojo(savedUser.getBusinessid()));
+        savedPojo.setRole(new RolePojo(savedUser.getRole().getId(), savedUser.getRole().getRole()));
 
         return savedPojo;
     }
@@ -68,8 +87,8 @@ public class userService {
 //    }
 
     public Boolean deleteUser(String id) {
-        User user=repo.findById(id).orElse(null);
-        if(user==null){
+        User user = repo.findById(id).orElse(null);
+        if (user == null) {
             return false;
         }
         user.setStatus(0);
@@ -79,25 +98,24 @@ public class userService {
 
     public UserPojo verifyUser(UserPojo user1) {
         User user;
-        if(user1.getEmail()!=null){
-             user= repo.findByEmail(user1.getEmail());
-             if(user==null){
-                 throw new RuntimeException("no Email Exists");
-             }
-        }else{
-             user= repo.findByMobileno(user1.getMobileno());
-            if(user==null){
+        if (user1.getEmail() != null) {
+            user = repo.findByEmail(user1.getEmail());
+            if (user == null) {
+                throw new RuntimeException("no Email Exists");
+            }
+        } else {
+            user = repo.findByMobileno(user1.getMobileno());
+            if (user == null) {
                 throw new RuntimeException("no Mobile No. Exists");
             }
         }
 
-        if(!passwordEncoder.matches(user1.getPassword(), user.getPassword())){
+        if (!passwordEncoder.matches(user1.getPassword(), user.getPassword())) {
             throw new RuntimeException("Invalid Password");
         }
 
 
-
-        if(user==null || user.getStatus()==0){
+        if (user == null || user.getStatus() == 0) {
             return null;
         }
 
@@ -109,9 +127,10 @@ public class userService {
         userPojo.setMobileno(user.getMobileno());
 
 
-        if (user.getRoleid() != null) {
-            userPojo.setRoleid(user.getRoleid().getId());
+        if (user.getRole() != null) {
+            userPojo.setRole(new RolePojo(user.getRole().getId(), user.getRole().getRole()));
         }
+        userPojo.setBusinessPojo(mapEntityToPojo(user.getBusinessid()));
 
         return userPojo;
     }
@@ -128,9 +147,10 @@ public class userService {
                 userPojo.setEmail(user.getEmail());
                 userPojo.setMobileno(user.getMobileno());
 
-                if (user.getRoleid() != null) {
-                    userPojo.setRoleid(user.getRoleid().getId());
+                if (user.getRole() != null) {
+                    userPojo.setRole(new RolePojo(user.getRole().getId(), user.getRole().getRole()));
                 }
+                userPojo.setBusinessPojo(mapEntityToPojo(user.getBusinessid()));
                 activeUsers.add(userPojo);
             }
         }
@@ -138,5 +158,20 @@ public class userService {
         return activeUsers;
     }
 
+
+    public BusinessPojo mapEntityToPojo(Business savedBusiness){
+
+        BusinessPojo savedPojo = new BusinessPojo();
+        savedPojo.setId(savedBusiness.getId());
+         savedPojo.setBusinessName(savedBusiness.getBusinessName());
+         savedPojo.setOwnerName(savedBusiness.getOwnerName());
+         savedPojo.setBusinessAddress(savedBusiness.getBusinessAddress());
+         savedPojo.setLicenseNo(savedBusiness.getLicenseNo());
+         savedPojo.setGstNo(savedBusiness.getGstNo());
+        savedPojo.setUserId(savedPojo.getUserId());
+         savedPojo.setCin(savedBusiness.getCin());
+         savedPojo.setBusinessModuleId(savedBusiness.getBusinessmodule().getId());
+         return savedPojo;
+}
 
 }

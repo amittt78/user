@@ -3,7 +3,6 @@ package com.example.user.entity;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.mongodb.core.index.Indexed;
 
 
@@ -23,7 +22,18 @@ public class User {
     private String mobileno;
     private Integer status=1;
     @DBRef
-    private Role roleid;
+    private Role role;
+    @DBRef
+    private Business businessid;
+
+    public Business getBusinessid() {
+        return businessid;
+    }
+
+    public void setBusinessid(Business businessid) {
+        this.businessid = businessid;
+    }
+
     public String getId() {
         return id;
     }
@@ -80,11 +90,11 @@ public class User {
         this.status = status;
     }
 
-    public Role getRoleid() {
-        return roleid;
+    public Role getRole() {
+        return role;
     }
 
-    public void setRoleid(Role roleid) {
-        this.roleid = roleid;
+    public void setRole(Role role) {
+        this.role = role;
     }
 }

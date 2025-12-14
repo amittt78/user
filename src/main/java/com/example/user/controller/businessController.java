@@ -1,6 +1,7 @@
 package com.example.user.controller;
 
 
+import com.example.user.entity.Business;
 import com.example.user.model.BusinessPojo;
 import com.example.user.service.businessService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,9 +11,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RequestMapping
+
+@RestController
 @CrossOrigin
-@RestController("/api/v1/business")
+@RequestMapping("/api/v1/business")
 public class businessController {
     @Autowired
     businessService service;
@@ -21,7 +23,7 @@ public class businessController {
     public ResponseEntity<?> addBusiness(@RequestBody BusinessPojo business){
         try{
             if(business!=null){
-                BusinessPojo businessPojo=service.addBusiness(business);
+                Business businessPojo=service.addBusiness(business);
                 return new ResponseEntity<>(businessPojo, HttpStatus.CREATED);
             }
         } catch (Exception e) {

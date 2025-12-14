@@ -19,4 +19,10 @@ public class RolePojo {
     public void setRole(String role) {
         this.role = role;
     }
+
+    public RolePojo(String id, String role) {
+        this.id = id;
+        this.role = role;
+    }
 }
+

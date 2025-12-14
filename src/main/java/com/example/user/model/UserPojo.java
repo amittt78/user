@@ -1,7 +1,5 @@
 package com.example.user.model;
 
-import com.example.user.entity.User;
-
 public class UserPojo {
     private String id;
     private String firstname;
@@ -10,7 +8,19 @@ public class UserPojo {
     private String password;
     private String mobileno;
     private Integer status=1;
-    private String roleid;
+    private String roleId;
+    private RolePojo role;
+    private BusinessPojo businessPojo;
+    public BusinessPojo getBusinessPojo() {
+        return businessPojo;
+    }
+
+    public void setBusinessPojo(BusinessPojo businessPojo) {
+        this.businessPojo = businessPojo;
+    }
+
+
+
 
     public String getId() {
         return id;
@@ -68,11 +78,19 @@ public class UserPojo {
         this.status = status;
     }
 
-    public String getRoleid() {
-        return roleid;
+    public RolePojo getRole() {
+        return role;
     }
 
-    public void setRoleid(String roleid) {
-        this.roleid = roleid;
+    public void setRole(RolePojo role) {
+       this.role = role;
+    }
+
+    public String getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(String roleId) {
+        this.roleId = roleId;
     }
 }
